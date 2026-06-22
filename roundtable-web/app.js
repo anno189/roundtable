@@ -3,35 +3,60 @@
 // 默认前 N 个人格
 const DEFAULT_PRESELECT = 3;
 
-// 初始化人格列表（前 N 个默认勾选）
-function initPersonaList() {
+// 启动入口
+function boot() {
+  // 应用 i18n（首次启动）
+  if (typeof applyI18n === "function") {
+    // 已由 lang.js 在 DOMContentLoaded 调用
+  } else {
+    document.addEventListener("DOMContentLoaded", renderPersonaList);
+  }
+  renderPersonaList();
+  update();
+}
+
+// 初始化人格列表
+function renderPersonaList() {
   const list = document.getElementById("personaList");
+  if (!list) return;
   list.innerHTML = "";
+
+  const isEn = (typeof currentLang !== "undefined" && currentLang === "en");
 
   const keys = Object.keys(PERSONAS);
   keys.forEach((key, idx) => {
     const p = PERSONAS[key];
     const checked = idx < DEFAULT_PRESELECT;
+    // 根据语言选择显示字段（deng 没有 _en 时 fallback）
+    const displayName = isEn && p.nameEn ? p.nameEn : p.name;
+    const displayDesc = isEn && p.descEn ? p.descEn : p.desc;
+    // ⭐ 标记逻辑：中文显示 ⭐；英文版已含 ⭐
+    const starHtml = (key === "zhangxuefeng" && !isEn)
+      ? ' <span class="star-mark" title="就业现实主义代表">⭐</span>'
+      : "";
     const item = document.createElement("label");
     item.className = "persona-item" + (checked ? " selected" : "");
     item.dataset.key = key;
     item.innerHTML = `
       <input type="checkbox" value="${key}"${checked ? " checked" : ""}>
       <div class="info">
-        <div class="name">${p.name}${key === "zhangxuefeng" ? ' <span class="star-mark" title="就业现实主义代表">⭐</span>' : ""}</div>
-        <div class="desc">${p.desc}</div>
+        <div class="name">${displayName}${starHtml}</div>
+        <div class="desc">${displayDesc}</div>
       </div>
     `;
     list.appendChild(item);
   });
 
   // 监听选择
-  list.addEventListener("change", e => {
-    if (e.target.type === "checkbox") {
-      e.target.closest(".persona-item").classList.toggle("selected", e.target.checked);
-      update();
-    }
-  });
+  if (!list._listenerAttached) {
+    list.addEventListener("change", e => {
+      if (e.target.type === "checkbox") {
+        e.target.closest(".persona-item").classList.toggle("selected", e.target.checked);
+        update();
+      }
+    });
+    list._listenerAttached = true;
+  }
 }
 
 // 随机选 N 个推荐人格
@@ -87,25 +112,30 @@ function setMode(btn) {
   document.querySelectorAll(".mode-btn").forEach(b => b.classList.remove("active"));
   btn.classList.add("active");
   currentMode = btn.dataset.mode;
-  const hints = {
-    quick: "快速共识：1 次 LLM 调用，30 秒内输出结论 + 置信度 + 盲点。适合日常决策。",
-    deep:  "深度圆桌：两轮发言 + 两轮反驳，约 90-120 秒。适合重大决策。"
-  };
   const hint = document.getElementById("modeHint");
-  if (hint) hint.textContent = hints[currentMode] || "";
+  if (hint) {
+    const key = currentMode === "quick" ? "modeHintQuick" : "modeHintDeep";
+    hint.textContent = (typeof t === "function" ? t(key) : hint.textContent);
+  }
   update();
 }
 
 // 渲染单个人格
 function renderPersona(p) {
   const anchorLines = p.anchors.map((a, i) => `  ${i + 1}. ${a}`).join("\n");
-  return `### ${p.name} — ${p.desc}
+  // 优先使用 i18n 标签，否则使用中文
+  const lbl = (k, cn) => (typeof t === "function" ? t(k) : cn);
+  // 根据语言选 name/desc
+  const isEn = (typeof currentLang !== "undefined" && currentLang === "en");
+  const displayName = isEn && p.nameEn ? p.nameEn : p.name;
+  const displayDesc = isEn && p.descEn ? p.descEn : p.desc;
+  return `### ${displayName} — ${displayDesc}
 
-- **说话风格**：${p.style}
-- **追问方向**：
+- **${lbl("lblStyle", "说话风格")}**：${p.style}
+- **${lbl("lblAnchors", "追问方向")}**：
 ${anchorLines}
-- **诚实规则**：${p.honesty}
-- **反套路**：${p.antiPattern}`;
+- **${lbl("lblHonesty", "诚实规则")}**：${p.honesty}
+- **${lbl("lblAntiPattern", "反套路")}**：${p.antiPattern}`;
 }
 
 // 生成完整 prompt
@@ -117,119 +147,120 @@ function buildPrompt() {
   const mode = getMode();
 
   const personasSection = personas.map(renderPersona).join("\n\n");
+  const lbl = (k, cn) => (typeof t === "function" ? t(k) : cn);
 
   if (mode === "quick") {
-    return `# 圆桌会议（快速共识模式）
+    return `# ${lbl("promptTitleQuick", "圆桌会议（快速共识模式）")}
 
-## 议题
+## ${lbl("promptTopicLabel", "议题")}
 
 ${topic}
 
-## 参与者
+## ${lbl("lblParticipants", "参与者")}
 
 ${personasSection}
 
-## 要求
+## ${lbl("lblRequirements", "要求")}
 
-请一次性完成以下5步，输出结构化结论。每步尽量精简，重点在Step 5的结构化产出。
+${lbl("qIntro", "请一次性完成以下5步，输出结构化结论。每步尽量精简，重点在Step 5的结构化产出。")}
 
-**Step 1：各抒己见** — 每位参与者100字左右回应议题，以[身份：人格名]开头。
+**${lbl("qStep1", "Step 1：各抒己见")}** — ${lbl("qStep1Desc", "每位参与者100字左右回应议题，以[身份：人格名]开头。")}
 
-**Step 2：交叉反驳** — 每位参与者用1-2句话反驳一位其他参与者的核心论点，显式称呼对方。
+**${lbl("qStep2", "Step 2：交叉反驳")}** — ${lbl("qStep2Desc", "每位参与者用1-2句话反驳一位其他参与者的核心论点，显式称呼对方。")}
 
-**Step 3：推理综合** — 列出共识点和分歧点。
+**${lbl("qStep3", "Step 3：推理综合")}** — ${lbl("qStep3Desc", "列出共识点和分歧点。")}
 
-**Step 4：共识裁决** — 一句话结论。分歧标记"待定"。
+**${lbl("qStep4", "Step 4：共识裁决")}** — ${lbl("qStep4Desc", "一句话结论。分歧标记\"待定\"。")}
 
-**Step 5：结构化产出** — 按以下格式输出：
+**${lbl("qStep5", "Step 5：结构化产出")}** — ${lbl("qStep5Desc", "按以下格式输出：")}
 
-## 结论
-[一段话]
+## ${lbl("lblConclusion", "结论")}
+[${lbl("pOnePara", "一段话")}]
 
-## 可操作信号
-| # | 行动 | 预期效果 | 负责视角 |
+## ${lbl("lblActionable", "可操作信号")}
+| # | ${lbl("thAction", "行动")} | ${lbl("thEffect", "预期效果")} | ${lbl("thPersp", "负责视角")} |
 |---|------|---------|---------|
 
-## 共识矩阵
-| 议题点 | 共识度 | 共识方向 | 分歧原因 |
+## ${lbl("lblConsensus", "共识矩阵")}
+| ${lbl("thIssue", "议题点")} | ${lbl("thLevel", "共识度")} | ${lbl("thDir", "共识方向")} | ${lbl("thDissent", "分歧原因")} |
 |--------|--------|---------|---------|
 
-## 盲点
+## ${lbl("lblBlindspots", "盲点")}
 1. ...
 2. ...
 
-## 置信度
-[高/中/低] — [理由]
+## ${lbl("lblConfidence", "置信度")}
+[${lbl("pHML", "高/中/低")}] — [${lbl("pReason", "理由")}]
 `;
   } else {
-    return `# 圆桌会议（深度圆桌模式 · 5步执行）
+    return `# ${lbl("promptTitleDeep", "圆桌会议（深度圆桌模式 · 5步执行）")}
 
-## 议题
+## ${lbl("promptTopicLabel", "议题")}
 
 ${topic}
 
-## 参与者
+## ${lbl("lblParticipants", "参与者")}
 
 ${personasSection}
 
-## 讨论规则
+## ${lbl("lblRules", "讨论规则")}
 
-1. **身份标注**：每条发言必须以 \`[身份：人格名]\` 开头
-2. **交叉质疑**：至少一位参与者必须质疑另一位参与者的核心论点
-3. **结论可操作**：最终结论必须包含具体可执行的行动项
-4. **盲点显式化**：必须列出本次讨论未覆盖的重要视角
+1. **${lbl("r1", "身份标注")}**：${lbl("r1Desc", "每条发言必须以 `[身份：人格名]` 开头")}
+2. **${lbl("r2", "交叉质疑")}**：${lbl("r2Desc", "至少一位参与者必须质疑另一位参与者的核心论点")}
+3. **${lbl("r3", "结论可操作")}**：${lbl("r3Desc", "最终结论必须包含具体可执行的行动项")}
+4. **${lbl("r4", "盲点显式化")}**：${lbl("r4Desc", "必须列出本次讨论未覆盖的重要视角")}
 
-## 讨论流程
+## ${lbl("lblFlow", "讨论流程")}
 
-请严格按以下5步执行：
+${lbl("dIntro", "请严格按以下5步执行：")}
 
-### Step 1：各抒己见
+### ${lbl("dStep1", "Step 1：各抒己见")}
 
-每位参与者从自己的视角回应议题，200字左右。
+${lbl("dStep1Desc", "每位参与者从自己的视角回应议题，200字左右。")}
 
-### Step 2：交叉反驳
+### ${lbl("dStep2", "Step 2：交叉反驳")}
 
-每位参与者至少反驳一位其他参与者的核心论点。反驳时必须显式称呼对方：\`"我不同意{{对方名}}的观点，因为……"\`
+${lbl("dStep2Desc", '每位参与者至少反驳一位其他参与者的核心论点。反驳时必须显式称呼对方：`"我不同意{{对方名}}的观点，因为……"`')}
 
-### Step 3：推理综合
+### ${lbl("dStep3", "Step 3：推理综合")}
 
-基于各方观点和反驳，综合出共识与分歧：
-- 列出各方一致同意的结论
-- 列出各方仍然分歧的观点及分歧原因
+${lbl("dStep3Desc", "基于各方观点和反驳，综合出共识与分歧：")}
+- ${lbl("dStep3a", "列出各方一致同意的结论")}
+- ${lbl("dStep3b", "列出各方仍然分歧的观点及分歧原因")}
 
-### Step 4：共识裁决
+### ${lbl("dStep4", "Step 4：共识裁决")}
 
-输出最终结论。共识优先，裁决次之。分歧点标记为"待定"而非强行统一。
+${lbl("dStep4Desc", '输出最终结论。共识优先，裁决次之。分歧点标记为"待定"而非强行统一。')}
 
-### Step 5：结构化产出
+### ${lbl("dStep5", "Step 5：结构化产出")}
 
-按以下格式输出：
+${lbl("dStep5Desc", "按以下格式输出：")}
 
 \`\`\`
-## 结论
+## ${lbl("lblConclusion", "结论")}
 
-[一段话总结最终结论]
+[${lbl("dConclusionDesc", "一段话总结最终结论")}]
 
-## 可操作信号
+## ${lbl("lblActionable", "可操作信号")}
 
-| # | 行动 | 预期效果 | 负责视角 |
+| # | ${lbl("thAction", "行动")} | ${lbl("thEffect", "预期效果")} | ${lbl("thPersp", "负责视角")} |
 |---|------|---------|---------|
 | 1 | ... | ... | ... |
 
-## 共识矩阵
+## ${lbl("lblConsensus", "共识矩阵")}
 
-| 议题点 | 共识度 | 共识方向 | 分歧原因 |
+| ${lbl("thIssue", "议题点")} | ${lbl("thLevel", "共识度")} | ${lbl("thDir", "共识方向")} | ${lbl("thDissent", "分歧原因")} |
 |--------|--------|---------|---------|
-| ... | 高/中/低 | ... | ... |
+| ... | ${lbl("pHML", "高/中/低")} | ... | ... |
 
-## 盲点
+## ${lbl("lblBlindspots", "盲点")}
 
-1. [本次讨论未覆盖的重要视角]
+1. [${lbl("dBlindspotDesc", "本次讨论未覆盖的重要视角")}]
 2. [...]
 
-## 置信度
+## ${lbl("lblConfidence", "置信度")}
 
-[高/中/低] — [理由]
+[${lbl("pHML", "高/中/低")}] — [${lbl("pReason", "理由")}]
 \`\`\`
 `;
   }
@@ -243,9 +274,9 @@ function update() {
   if (!prompt) {
     const topic = document.getElementById("topic").value.trim();
     if (!topic) {
-      preview.innerHTML = '<div class="empty-state">请先输入议题</div>';
+      preview.innerHTML = '<div class="empty-state">' + (typeof t === "function" ? t("emptyNoTopic") : "请先输入议题") + '</div>';
     } else {
-      preview.innerHTML = '<div class="empty-state">请至少选择一位参与人格</div>';
+      preview.innerHTML = '<div class="empty-state">' + (typeof t === "function" ? t("emptyNoPersona") : "请至少选择一位参与人格") + '</div>';
     }
     return;
   }
@@ -257,22 +288,21 @@ function update() {
 async function copyPrompt() {
   const prompt = buildPrompt();
   if (!prompt) {
-    showToast("请先填写议题并选择参与人格", true);
+    showToast(typeof t === "function" ? t("toastFillFirst") : "请先填写议题并选择参与人格", true);
     return;
   }
 
   try {
     await navigator.clipboard.writeText(prompt);
-    showToast("✓ 已复制到剪贴板");
+    showToast("✓ " + (typeof t === "function" ? t("toastCopied") : "已复制到剪贴板"));
   } catch (err) {
-    // 降级方案
     const ta = document.createElement("textarea");
     ta.value = prompt;
     document.body.appendChild(ta);
     ta.select();
     document.execCommand("copy");
     document.body.removeChild(ta);
-    showToast("✓ 已复制到剪贴板");
+    showToast("✓ " + (typeof t === "function" ? t("toastCopied") : "已复制到剪贴板"));
   }
 }
 
@@ -280,7 +310,7 @@ async function copyPrompt() {
 function downloadPrompt() {
   const prompt = buildPrompt();
   if (!prompt) {
-    showToast("请先填写议题并选择参与人格", true);
+    showToast(typeof t === "function" ? t("toastFillFirst") : "请先填写议题并选择参与人格", true);
     return;
   }
   const blob = new Blob([prompt], { type: "text/markdown;charset=utf-8" });
@@ -290,7 +320,7 @@ function downloadPrompt() {
   a.download = `roundtable-${Date.now()}.md`;
   a.click();
   URL.revokeObjectURL(url);
-  showToast("✓ 已下载");
+  showToast("✓ " + (typeof t === "function" ? t("toastDownloaded") : "已下载"));
 }
 
 // Toast 提示
@@ -307,6 +337,13 @@ document.addEventListener("input", e => {
   if (e.target.id === "topic") update();
 });
 
-// 启动
-initPersonaList();
-update();
+// 启动 - 等待 lang.js 的 i18n 应用后再 boot，确保 i18n 不被覆盖
+function startApp() {
+  if (typeof applyI18n === "function") applyI18n();
+  boot();
+}
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", startApp);
+} else {
+  startApp();
+}

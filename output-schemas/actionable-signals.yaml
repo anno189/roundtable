@@ -1,7 +1,7 @@
 id: actionable-signals
-name: 可操作信号表
+name: Actionable Signals
 version: v1.0
-description: 圆桌会议结论的可执行行动项
+description: Executable action items from Roundtable conclusions
 
 schema:
   type: array
@@ -10,19 +10,19 @@ schema:
     properties:
       id:
         type: integer
-        description: 序号
+        description: Sequence number
       action:
         type: string
-        description: 具体可执行的行动
+        description: Concrete, executable action
       expected_effect:
         type: string
-        description: 预期效果
+        description: Expected effect
       responsible_perspective:
         type: string
-        description: 负责视角（对应哪个人格的追问方向）
+        description: Responsible perspective (which persona's questioning direction it maps to)
 
 example:
   - id: 1
-    action: "用2周完成数据清洗和基础回测框架搭建"
-    expected_effect: "排除数据层面的低级错误，建立验证基础设施"
-    responsible_perspective: "芒格（工程思维，先排除愚蠢失败）"
+    action: "Complete data cleaning and basic backtest framework setup in 2 weeks"
+    expected_effect: "Rule out low-level errors in the data layer, establish verification infrastructure"
+    responsible_perspective: "Munger (engineering mindset, exclude stupid failures first)"

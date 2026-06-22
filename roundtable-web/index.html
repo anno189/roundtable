@@ -70,6 +70,7 @@
 
   /* ============ Hero ============ */
   .hero {
+    position: relative;
     padding-bottom: 40px;
     border-bottom: 1px solid var(--border-soft);
     margin-bottom: 56px;
@@ -99,6 +100,27 @@
     line-height: 1.5;
     color: var(--olive);
     margin: 0;
+  }
+  .lang-switch {
+    position: absolute;
+    top: 28px;
+    right: 28px;
+    background: var(--ivory);
+    border: 1px solid var(--border);
+    color: var(--near-black);
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all 0.18s;
+    font-family: var(--sans);
+    letter-spacing: 0.5px;
+  }
+  .lang-switch:hover {
+    background: var(--brand);
+    color: #fff;
+    border-color: var(--brand);
   }
 
   /* ============ Section ============ */
@@ -581,15 +603,16 @@
 
   <!-- ============ Hero ============ -->
   <header class="hero">
-    <span class="hero-label">Prompt Generator · 圆桌会议</span>
-    <h1>圆桌会议 Prompt 生成器</h1>
-    <p class="definition">输入议题 → 选择参与人格 → 复制 Prompt → 粘贴到任何 LLM 对话框</p>
+    <span class="hero-label" data-i18n="heroLabel">Prompt Generator · 圆桌会议</span>
+    <h1 data-i18n="heroTitle">圆桌会议 Prompt 生成器</h1>
+    <p class="definition" data-i18n="heroSubtitle">输入议题 → 选择参与人格 → 复制 Prompt → 粘贴到任何 LLM 对话框</p>
+    <button class="lang-switch" onclick="toggleLang()" data-i18n="langSwitchTo">EN</button>
   </header>
 
   <!-- ============ Guide ============ -->
   <div class="guide">
-    <p class="guide-label">使用步骤</p>
-    <p class="guide-text">
+    <p class="guide-label" data-i18n="guideLabel">使用步骤</p>
+    <p class="guide-text" data-i18n="guideText">
       <strong>第一步</strong>在左侧输入你要讨论的问题；<strong>第二步</strong>勾选要参与讨论的人格（默认前 3 个）；<strong>第三步</strong>复制右侧生成的 Prompt；<strong>第四步</strong>粘贴到 ChatGPT / Claude / Gemini / 通义千问等任意 LLM，等待 30 秒左右，查看多视角分析结果。
     </p>
   </div>
@@ -602,25 +625,25 @@
       <section>
         <div class="section-head section-head-row">
           <div>
-            <p class="section-type">讨论模式 · Mode</p>
-            <h2 class="section-title">选择深度</h2>
+            <p class="section-type" data-i18n="sectionTypeMode">讨论模式 · Mode</p>
+            <h2 class="section-title" data-i18n="sectionTitleMode">选择深度</h2>
           </div>
           <div class="mode-toggle">
-            <button class="mode-btn active" data-mode="quick" onclick="setMode(this)">快速共识</button>
-            <button class="mode-btn" data-mode="deep" onclick="setMode(this)">深度圆桌</button>
+            <button class="mode-btn active" data-mode="quick" onclick="setMode(this)" data-i18n="modeQuick">快速共识</button>
+            <button class="mode-btn" data-mode="deep" onclick="setMode(this)" data-i18n="modeDeep">深度圆桌</button>
           </div>
         </div>
-        <p class="mode-hint" id="modeHint">快速共识：1 次 LLM 调用，30 秒内输出结论 + 置信度 + 盲点。适合日常决策。</p>
+        <p class="mode-hint" id="modeHint" data-i18n="modeHintQuick">快速共识：1 次 LLM 调用，30 秒内输出结论 + 置信度 + 盲点。适合日常决策。</p>
 
         <div class="section-head section-head-row" style="margin-top:18px">
           <div>
-            <p class="section-type">参与人格 · Personas</p>
-            <h2 class="section-title">选择参与者</h2>
+            <p class="section-type" data-i18n="sectionTypePersonas">参与人格 · Personas</p>
+            <h2 class="section-title" data-i18n="sectionTitlePersonas">选择参与者</h2>
           </div>
           <div class="quick-actions">
-            <button onclick="selectNone()">全不选</button>
-            <button onclick="selectDefault()" title="随机选3个">推荐 3 个</button>
-            <button onclick="selectFive()" title="随机选5个">推荐 5 个</button>
+            <button onclick="selectNone()" data-i18n="btnSelectNone">全不选</button>
+            <button onclick="selectDefault()" data-i18n-title="titleRecommend3" data-i18n="btnRecommend3" title="随机选3个">推荐 3 个</button>
+            <button onclick="selectFive()" data-i18n-title="titleRecommend5" data-i18n="btnRecommend5" title="随机选5个">推荐 5 个</button>
           </div>
         </div>
         <div class="persona-list" id="personaList"></div>
@@ -633,67 +656,67 @@
 
       <section>
         <div class="field">
-          <label class="field-label" for="topic">议题 · Topic</label>
-          <textarea id="topic" placeholder="例：我要不要换工作？新公司薪资高 30%，但方向是我不太熟悉的领域..."></textarea>
+          <label class="field-label" for="topic" data-i18n="fieldLabelTopic">议题 · Topic</label>
+          <textarea id="topic" data-i18n-placeholder="topicPlaceholder" placeholder="例：我要不要换工作？新公司薪资高 30%，但方向是我不太熟悉的领域..."></textarea>
         </div>
       </section>
 
       <section>
         <div class="section-head">
-          <p class="section-type">生成结果 · Output</p>
-          <h2 class="section-title">可复制的 Prompt</h2>
+          <p class="section-type" data-i18n="sectionTypeOutput">生成结果 · Output</p>
+          <h2 class="section-title" data-i18n="sectionTitleOutput">可复制的 Prompt</h2>
         </div>
 
         <div class="preview-wrap">
           <div class="preview-head">
-            <span class="label">Markdown · Prompt</span>
+            <span class="label" data-i18n="labelMarkdown">Markdown · Prompt</span>
             <span class="meta" id="charCount">0 chars</span>
           </div>
           <div class="preview-area" id="preview">
-            <div class="empty-state">上方填写议题、选择人格后，这里会自动生成 Prompt</div>
+            <div class="empty-state" data-i18n="emptyState">上方填写议题、选择人格后，这里会自动生成 Prompt</div>
           </div>
         </div>
 
         <div class="actions">
           <button class="btn btn-primary" id="copyBtn" onclick="copyPrompt()">
-            <span>📋</span> 复制到剪贴板
+            <span>📋</span> <span data-i18n="btnCopy">复制到剪贴板</span>
           </button>
           <button class="btn btn-secondary" onclick="downloadPrompt()">
-            <span>💾</span> 下载 .md
+            <span>💾</span> <span data-i18n="btnDownload">下载 .md</span>
           </button>
         </div>
 
         <!-- ============ LLM Quick Links ============ -->
         <div class="llm-links">
-          <p class="llm-links-label">复制后粘贴到：</p>
+          <p class="llm-links-label" data-i18n="llmLinksLabel">复制后粘贴到：</p>
           <div class="llm-links-list">
             <a href="https://www.doubao.com/chat/" target="_blank" rel="noopener" class="llm-link">
               <span class="llm-emoji">🫘</span>
-              <span class="llm-name">豆包</span>
+              <span class="llm-name" data-i18n="llmDoubao">豆包</span>
             </a>
             <a href="https://www.kimi.com/" target="_blank" rel="noopener" class="llm-link">
               <span class="llm-emoji">🌙</span>
-              <span class="llm-name">Kimi</span>
+              <span class="llm-name" data-i18n="llmKimi">Kimi</span>
             </a>
             <a href="https://chat.deepseek.com/" target="_blank" rel="noopener" class="llm-link">
               <span class="llm-emoji">🐋</span>
-              <span class="llm-name">DeepSeek</span>
+              <span class="llm-name" data-i18n="llmDeepSeek">DeepSeek</span>
             </a>
             <a href="https://tongyi.aliyun.com/qianwen/" target="_blank" rel="noopener" class="llm-link">
               <span class="llm-emoji">☁️</span>
-              <span class="llm-name">通义千问</span>
+              <span class="llm-name" data-i18n="llmTongyi">通义千问</span>
             </a>
             <a href="https://yiyan.baidu.com/" target="_blank" rel="noopener" class="llm-link">
               <span class="llm-emoji">🐻</span>
-              <span class="llm-name">文心一言</span>
+              <span class="llm-name" data-i18n="llmWenxin">文心一言</span>
             </a>
             <a href="https://chatglm.cn/main/alltoolsdetail" target="_blank" rel="noopener" class="llm-link">
               <span class="llm-emoji">🧠</span>
-              <span class="llm-name">智谱清言</span>
+              <span class="llm-name" data-i18n="llmZhipu">智谱清言</span>
             </a>
             <a href="https://hunyuan.tencent.com/bot/chat" target="_blank" rel="noopener" class="llm-link">
               <span class="llm-emoji">🐧</span>
-              <span class="llm-name">腾讯混元</span>
+              <span class="llm-name" data-i18n="llmHunyuan">腾讯混元</span>
             </a>
           </div>
         </div>
@@ -704,15 +727,16 @@
 
   <!-- ============ Footer ============ -->
   <footer class="site-footer">
-    <p>圆桌会议 Prompt 生成器 · <a href="https://github.com/FartherQuant/roundtable" target="_blank" rel="noopener">GitHub</a> · <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="noopener">CC BY-SA 4.0</a></p>
+    <p data-i18n="footerLine1">圆桌会议 Prompt 生成器 · <a href="https://github.com/FartherQuant/roundtable" target="_blank" rel="noopener">GitHub</a> · <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="noopener">CC BY-SA 4.0</a></p>
     <p class="footer-version">v0.4.0 · 2026-06-21</p>
-    <p class="footer-sub">© 2026 Roundtable · 让 AI 帮你从多个视角思考</p>
+    <p class="footer-sub" data-i18n="footerSub">© 2026 Roundtable · 让 AI 帮你从多个视角思考</p>
   </footer>
 
 </div>
 
-<div class="toast" id="toast">已复制到剪贴板</div>
+<div class="toast" id="toast" data-i18n="toastCopied">已复制到剪贴板</div>
 
+<script src="lang.js"></script>
 <script src="personas.js"></script>
 <script src="app.js"></script>
 </body>

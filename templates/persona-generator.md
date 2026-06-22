@@ -1,6 +1,7 @@
-# 人格生成器
+# 人格生成器 / Persona Generator
 
 > 输入一个人物名字，输出符合 persona-schema 的人格配方 YAML。
+> Enter a person's name and output a persona recipe YAML that conforms to persona-schema.
 
 ---
 

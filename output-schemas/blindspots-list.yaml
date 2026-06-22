@@ -1,7 +1,7 @@
 id: blindspots-list
-name: 盲点列表
+name: Blindspots List
 version: v1.0
-description: 圆桌会议未覆盖的重要视角
+description: Important perspectives not covered by the Roundtable
 
 schema:
   type: array
@@ -11,19 +11,19 @@ schema:
     properties:
       id:
         type: integer
-        description: 序号
+        description: Sequence number
       blindspot:
         type: string
-        description: 未覆盖的视角描述
+        description: Description of the uncovered perspective
       severity:
         type: string
-        enum: [高, 中, 低]
-        description: 对结论的影响程度
+        enum: [high, medium, low]
+        description: Impact level on the conclusion
 
 example:
   - id: 1
-    blindspot: "法律与合规风险——找种子用户试跑涉及资金管理，是否需要合规资质"
-    severity: "高"
+    blindspot: "Legal and compliance risk — finding seed users for live testing involves fund management; whether compliance qualifications are needed"
+    severity: "high"
   - id: 2
-    blindspot: "过拟合的识别与处理——回测通过但实盘失败是量化领域最常见的失败模式"
-    severity: "中"
+    blindspot: "Overfitting detection and handling — backtest passes but live testing fails is the most common failure mode in quant"
+    severity: "medium"

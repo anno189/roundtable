@@ -1,6 +1,8 @@
 # 圆桌会议 Prompt 模板 v1.1
+# Roundtable Prompt Template v1.1
 
 > 复制以下全部内容到 ChatGPT / Claude / 任何 LLM 对话框，替换 `{议题}` 为你的问题，即可运行。
+> Copy the content below to any LLM (ChatGPT / Claude / etc.), replace `{topic}` with your question, and run.
 
 ---
 

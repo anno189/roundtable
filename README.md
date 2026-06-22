@@ -1,6 +1,6 @@
 # Roundtable
 
-> 让 AI 帮你从多个视角思考 · [Web 生成器](https://github.com/FartherQuant/roundtable) · CC BY-SA 4.0
+> 让 AI 帮你从多个视角思考 · [Web 生成器](https://roundtable.1dian.site/) · CC BY-SA 4.0 · [GitHub](https://github.com/FartherQuant/roundtable)
 
 一个开源的多角色结构化讨论 prompt 工程框架——让 LLM 扮演不同思维视角的角色，交叉质疑，形成共识。
 配套 21 个内置人格配方（卡尼曼、芒格、稻盛和夫、乔布斯……），覆盖认知偏差、逆向思维、东方经营哲学、心性经营等维度。

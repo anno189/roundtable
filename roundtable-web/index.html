@@ -146,6 +146,39 @@
     margin: 0;
   }
 
+  /* ============ Mode Toggle ============ */
+  .mode-toggle {
+    display: inline-flex;
+    background: var(--ivory);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 3px;
+    gap: 2px;
+  }
+  .mode-btn {
+    border: none;
+    background: transparent;
+    color: var(--stone);
+    padding: 6px 12px;
+    font-size: 13px;
+    font-weight: 500;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.18s;
+    font-family: var(--sans);
+  }
+  .mode-btn:hover { color: var(--near-black); }
+  .mode-btn.active {
+    background: var(--brand);
+    color: #fff;
+  }
+  .mode-hint {
+    margin: 10px 0 0;
+    font-size: 12px;
+    color: var(--stone);
+    line-height: 1.55;
+  }
+
   /* ============ Two-column Grid ============ */
   .grid {
     display: grid;
@@ -569,6 +602,18 @@
       <section>
         <div class="section-head section-head-row">
           <div>
+            <p class="section-type">讨论模式 · Mode</p>
+            <h2 class="section-title">选择深度</h2>
+          </div>
+          <div class="mode-toggle">
+            <button class="mode-btn active" data-mode="quick" onclick="setMode(this)">快速共识</button>
+            <button class="mode-btn" data-mode="deep" onclick="setMode(this)">深度圆桌</button>
+          </div>
+        </div>
+        <p class="mode-hint" id="modeHint">快速共识：1 次 LLM 调用，30 秒内输出结论 + 置信度 + 盲点。适合日常决策。</p>
+
+        <div class="section-head section-head-row" style="margin-top:18px">
+          <div>
             <p class="section-type">参与人格 · Personas</p>
             <h2 class="section-title">选择参与者</h2>
           </div>
@@ -659,7 +704,7 @@
 
   <!-- ============ Footer ============ -->
   <footer class="site-footer">
-    <p>圆桌会议 Prompt 生成器 · <a href="https://github.com/" target="_blank" rel="noopener">GitHub</a> · MIT License</p>
+    <p>圆桌会议 Prompt 生成器 · <a href="https://github.com/FartherQuant/roundtable" target="_blank" rel="noopener">GitHub</a> · <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="noopener">CC BY-SA 4.0</a></p>
     <p class="footer-version">v0.4.0 · 2026-06-21</p>
     <p class="footer-sub">© 2026 Roundtable · 让 AI 帮你从多个视角思考</p>
   </footer>

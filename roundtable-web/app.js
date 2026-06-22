@@ -76,9 +76,24 @@ function getSelectedPersonas() {
   return keys.map(k => ({ key: k, ...PERSONAS[k] }));
 }
 
-// 获取当前模式（默认快速共识）
+// 模式选择
+let currentMode = "quick";
+
 function getMode() {
-  return "quick";
+  return currentMode;
+}
+
+function setMode(btn) {
+  document.querySelectorAll(".mode-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  currentMode = btn.dataset.mode;
+  const hints = {
+    quick: "快速共识：1 次 LLM 调用，30 秒内输出结论 + 置信度 + 盲点。适合日常决策。",
+    deep:  "深度圆桌：两轮发言 + 两轮反驳，约 90-120 秒。适合重大决策。"
+  };
+  const hint = document.getElementById("modeHint");
+  if (hint) hint.textContent = hints[currentMode] || "";
+  update();
 }
 
 // 渲染单个人格

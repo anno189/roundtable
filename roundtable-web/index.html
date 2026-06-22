@@ -243,6 +243,19 @@
     font-weight: 500;
     font-size: 15px;
     color: var(--near-black);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+  }
+  .persona-item .star-mark {
+    font-size: 13px;
+    filter: drop-shadow(0 0 2px rgba(255, 200, 60, 0.5));
+    animation: starGlow 2.5s ease-in-out infinite;
+  }
+  @keyframes starGlow {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
   }
   .persona-item .desc {
     font-size: 12px;

@@ -18,7 +18,7 @@ function initPersonaList() {
     item.innerHTML = `
       <input type="checkbox" value="${key}"${checked ? " checked" : ""}>
       <div class="info">
-        <div class="name">${p.name}</div>
+        <div class="name">${p.name}${key === "zhangxuefeng" ? ' <span class="star-mark" title="就业现实主义代表">⭐</span>' : ""}</div>
         <div class="desc">${p.desc}</div>
       </div>
     `;

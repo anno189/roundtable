@@ -1,6 +1,6 @@
 # Roundtable
 
-> Let AI help you think from multiple perspectives · [Web Generator](https://roundtable.1dian.site/) · CC BY-SA 4.0 · [GitHub](https://github.com/FartherQuant/roundtable) · [简体中文](README.zh.md)
+> Let AI help you think from multiple perspectives · [Web Generator](https://roundtable.1dian.site/) · CC BY-SA 4.0 · [GitHub](https://github.com/FartherQuant/roundtable) · [简体中文](README.md)
 
 An open-source multi-perspective structured discussion prompt framework — let an LLM play different thinking personas, cross-challenge each other, and form a consensus.
 Bundled with 21 built-in persona recipes (Kahneman, Munger, Inamori, Jobs, …) covering cognitive bias, inversion thinking, Eastern management philosophy, and mind cultivation.
@@ -62,6 +62,23 @@ Refer to [persona-schema.yaml](persona-schema.yaml) to define a new persona, 4 e
 2. **stance_anchors** — Questioning directions (2-5 items, verb-led)
 3. **honesty_rules** — When to admit one's own method doesn't apply
 4. **anti_pattern** — What error occurs when one's core method is over-extended
+
+### Generate Personas Quickly with the Generator
+
+If you don't want to hand-craft the YAML, use [templates/persona-generator.md](templates/persona-generator.md) and let an LLM generate it for you:
+
+1. Open [templates/persona-generator.md](templates/persona-generator.md)
+2. Replace `{人物名}` with the person you want to add (e.g. `Kazuo Inamori` / `Ben Horowitz` / `Xiang Shuai`)
+3. Copy the full text and paste it into ChatGPT / Claude / any LLM
+4. In ~30 seconds, you'll get a YAML recipe that conforms to `persona-schema.yaml`
+5. Save the output as `personas/<english-name>.yaml` and it becomes available in the Web generator and CLI
+
+Design constraints (enforced by the generator):
+
+- **speaking_style** must capture a unique linguistic fingerprint — instantly recognizable
+- **stance_anchors** 2-5 items, verb-led, define a distinctive entry point into problems
+- **honesty_rules** must honestly declare the method's boundaries
+- **anti_pattern** must point to the over-extension of the core strength
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines.
 

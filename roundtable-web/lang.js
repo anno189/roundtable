@@ -55,6 +55,7 @@ const I18N = {
     // Footer
     footerLine1: 'Roundtable Prompt Generator · <a href="https://github.com/FartherQuant/roundtable" target="_blank" rel="noopener">GitHub</a> · <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.en" target="_blank" rel="noopener">CC BY-SA 4.0</a>',
     footerSub: "© 2026 Roundtable · Let AI help you think from multiple perspectives",
+    footerKami: "Visual Design · Kami Paper System · Paper Aesthetic © 2026",
 
     // Lang switch
     langSwitchTo: "中",
@@ -252,6 +253,7 @@ const I18N = {
     // Footer
     footerLine1: '圆桌会议 Prompt 生成器 · <a href="https://github.com/FartherQuant/roundtable" target="_blank" rel="noopener">GitHub</a> · <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="noopener">CC BY-SA 4.0</a>',
     footerSub: "© 2026 Roundtable · 让 AI 帮你从多个视角思考",
+    footerKami: '视觉设计 · <a href="https://github.com/tw93/Kami" target="_blank" rel="noopener">Kami Paper System</a> · 纸面美学 © 2026',
 
     // Lang switch
     langSwitchTo: "EN"

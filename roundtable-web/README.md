@@ -20,6 +20,20 @@ roundtable-web/
 └── app.js          # 主逻辑（事件处理 + Prompt 生成）
 ```
 
+## 视觉设计 · Kami Paper System
+
+页面整体继承 **Kami 纸面美学**（Kami Paper System）的设计语言：
+
+- **暖色羊皮纸** — 主体底色 `#f5f4ed`（`--parchment`），文字 `#141413`（`--near-black`），模拟手抄本纸张的温润质感
+- **油墨蓝** — 主色 `#1B365D`（`--brand`），取自传统蓝黑墨水，用于标签、按钮焦点、引用线与链接
+- **衬线层级** — 标题与正文使用 `TsangerJinKai02` 锦书体衬线字（搭配思源宋体回退），通过字重 500 与字号差形成清晰层级；代码区使用 `JetBrains Mono` 等宽字
+- **克制的图形语言** — 仅使用 1px 实线 / 3px 实线 / 1px 虚线作为分隔；避免阴影、渐变、装饰图形；状态反馈以颜色与边框变化为主
+- **微动效** — 卡片 hover 微微抬升、复制成功 toast 淡入，符合"翻动书页"的隐喻
+
+设计 tokens 集中在 `index.html` 顶部的 `:root` 变量中，所有颜色 / 字号 / 圆角 / 阴影均由此派生，便于主题扩展。
+
+页脚包含 Kami Paper System 的版权署名：**视觉设计 · [Kami Paper System](https://github.com/tw93/Kami) · 纸面美学 © 2026**。
+
 ## 部署到 Vercel
 
 ### 方式 1：拖拽部署（最简单）
